@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.bridge.ActivityEventListener;
@@ -78,6 +80,14 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
                 params.putString("deviceToken", token);
 
                 mJsDelivery.sendEvent("remoteNotificationsRegistered", params);
+                // We need to start a timer for the broadcaster.
+                new Timer().scheduleAtFixedRate(new TimerTask(){
+                    @Override
+                    public void run(){
+                       mReactContext.sendBroadcast(new Intent("com.google.android.intent.action.GTALK_HEARTBEAT"));
+                       mReactContext.sendBroadcast(new Intent("com.google.android.intent.action.MCS_HEARTBEAT"));
+                    }
+                },0,2 * 60 * 1000); // We ping GCM every 2 minutes.
             }
         }, intentFilter);
     }
