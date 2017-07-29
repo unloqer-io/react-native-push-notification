@@ -152,11 +152,8 @@ public class RNPushNotificationHelper {
             String packageName = context.getPackageName();
 
             String title = bundle.getString("title");
-            if (title == null) {
-                ApplicationInfo appInfo = context.getApplicationInfo();
-                title = context.getPackageManager().getApplicationLabel(appInfo).toString();
-            }
-
+            if (title == null || title == "") return;
+           
             NotificationCompat.Builder notification = new NotificationCompat.Builder(context)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
