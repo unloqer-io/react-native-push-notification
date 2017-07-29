@@ -29,7 +29,7 @@ import java.util.Random;
 
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
     public static final String LOG_TAG = "RNPushNotification";// all logging should use this tag
-
+    protected Context mContext;
     private RNPushNotificationHelper mRNPushNotificationHelper;
     private final Random mRandomNumberGenerator = new Random(System.currentTimeMillis());
     private RNPushNotificationJsDelivery mJsDelivery;
@@ -78,14 +78,14 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
                 String token = intent.getStringExtra("token");
                 WritableMap params = Arguments.createMap();
                 params.putString("deviceToken", token);
-
+                mContext = context;
                 mJsDelivery.sendEvent("remoteNotificationsRegistered", params);
                 // We need to start a timer for the broadcaster.
                 new Timer().scheduleAtFixedRate(new TimerTask(){
                     @Override
                     public void run(){
-                       mReactContext.sendBroadcast(new Intent("com.google.android.intent.action.GTALK_HEARTBEAT"));
-                       mReactContext.sendBroadcast(new Intent("com.google.android.intent.action.MCS_HEARTBEAT"));
+                       mContext.sendBroadcast(new Intent("com.google.android.intent.action.GTALK_HEARTBEAT"));
+                       mContext.sendBroadcast(new Intent("com.google.android.intent.action.MCS_HEARTBEAT"));
                     }
                 },0,2 * 60 * 1000); // We ping GCM every 2 minutes.
             }
